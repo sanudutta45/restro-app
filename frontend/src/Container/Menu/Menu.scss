@@ -1,0 +1,42 @@
+#menu{
+    .title_bar{
+        background-color: #0099cc;
+        width:100%;
+        padding: 15px 0 !important;
+        color:#ffff;
+        font-size: 20px;
+    }
+
+    .carousel-inner img {
+        width: 100%;
+        height: 500px;
+    }
+
+    .accordion{
+       width:100%;
+    }
+
+    a{
+        text-decoration: none !important;
+    }
+
+    .dish_category{
+        color:rgb(87, 84, 84);
+        font-weight: 600;
+    }
+
+    .dishes li{
+        list-style-type: none;
+        display: flex;
+    }
+
+
+    .dishes img{
+        width:18px;
+        vertical-align: middle;
+    }
+
+    .dish_info{
+        padding-top: 2px;
+    }
+}

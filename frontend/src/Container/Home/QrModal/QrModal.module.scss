@@ -1,0 +1,14 @@
+.header {
+    font-size: 30px;
+  &:after {
+    content: "e-menu";
+    color: rgb(118, 143, 80);
+    font-size: 12px;
+    vertical-align: text-top;
+  }
+}
+.qrScanWraapper {
+  max-width: 450px;
+  width: 100%;
+  margin: 0 auto;
+}

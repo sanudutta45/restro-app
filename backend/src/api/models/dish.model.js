@@ -14,10 +14,10 @@ const dishSchema = new mongoose.Schema(
       maxlength: 128,
       trim: true,
     },
-    category: {
-      type: String,
-      maxlength: 128,
-      trim: true,
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "categories"
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

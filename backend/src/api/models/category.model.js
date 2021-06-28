@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
  * @private
  */
 
-const usersSchema = new mongoose.Schema(
+const categorySchema = new mongoose.Schema(
   {
     _id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,17 +15,9 @@ const usersSchema = new mongoose.Schema(
       maxlength: 128,
       trim: true,
     },
-    rating:{
-      type: Number,
-      default: 0,
-    },
-    openAt: {
-      type: Number,
-      trim: true,
-    },
-    closeAt: {
-      type: Number,
-      trim: true,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
     },
   },
   {
@@ -37,4 +29,4 @@ const usersSchema = new mongoose.Schema(
  * @typedef users
  */
 
-module.exports = mongoose.model("users", usersSchema, "users");
+module.exports = mongoose.model("categories", categorySchema);

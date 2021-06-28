@@ -1,7 +1,7 @@
 const express = require('express');
 
 //custom routes
-const menuRoutes = require('./menu.route');
+const restaurentRoute = require("./restaurent.route");
 const router = express.Router();
 
 /**
@@ -16,6 +16,8 @@ const router = express.Router();
  *          description: A successful response
  */
 router.get('/status', (req, res) => res.send('OK'));
-router.use('/restaurant', menuRoutes);
+// router.use('/restaurant', menuRoutes);
+router.use("/restaurent",restaurentRoute);
+
 
 module.exports = router;

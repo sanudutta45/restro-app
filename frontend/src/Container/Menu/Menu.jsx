@@ -1,121 +1,112 @@
-import React, { Fragment } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import "./Menu.scss";
+import { Container, Row, Col } from "react-bootstrap";
+import CategoryCard from "./CategoryCard/CategoryCard";
+import FoodCard from "./FoodCard/FoodCard";
 
-const Menu = (props) => {
-  const { menu, serverError } = props;
+//actions
+import { getCategories, getRestaurant } from "../../actions/restaurentAction";
 
+import MenuStyle from "./Menu.module.scss";
+
+const Menu = () => {
+  const { id } = useParams();
+
+  const [categories, setCategories] = useState([]);
+  const [dishes, setDishes] = useState([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    (async function () {
+      setServerError("");
+      try {
+        const result = await getCategories(id);
+        setCategories(result);
+        result.length > 0 && setActiveCategory(result[0]._id);
+      } catch (error) {
+        setServerError(error.message);
+        setLoading(false);
+      }
+    })();
+  }, [id]);
+
+  useEffect(() => {
+    if (activeCategory) {
+      (async function () {
+        setServerError("");
+        const reqObj = {
+          page: page,
+          categoryId: activeCategory,
+          id: id,
+        };
+        try {
+          setLoading(true);
+          const result = await getRestaurant(reqObj);
+          if (result.total - result.perPage * result.page > 0) setHasMore(true);
+          setDishes((prevResult) => [...prevResult, ...result.dishes]);
+          setLoading(false);
+        } catch (error) {
+          setServerError(error.message);
+          setLoading(false);
+        }
+      })();
+    }
+  }, [id, activeCategory, page]);
+
+  const handleCategoryChange = (categoryId) => {
+    if (categoryId === activeCategory) return;
+    setDishes([]);
+    setActiveCategory(categoryId);
+  };
   return (
-    <section id="menu">
-      <div className="container-fluid">
-        <div className="row">
-          <div className="title_bar text-center">
-            <h1>{menu.name || ""}</h1>
-          </div>
+    <Container fluid="md">
+      <ul className="d-flex justify-content-center mt-5 mb-3 flex-wrap">
+        {categories &&
+          categories.map((category) => (
+            <li className="p-2" key={category._id}>
+              <CategoryCard
+                name={category.title}
+                active={category._id === activeCategory}
+                onClick={() => handleCategoryChange(category._id)}
+              />
+            </li>
+          ))}
+      </ul>
 
-          <div id="demo" className="carousel slide" data-ride="carousel">
-            <ul className="carousel-indicators">
-              <li data-target="#demo" data-slide-to="0" className="active">
-                
-              </li>
-              <li data-target="#demo" data-slide-to="1"></li>
-              <li data-target="#demo" data-slide-to="2"></li>
-            </ul>
+      <Row>
+        {loading && <Col className="text-center">loading...</Col>}
 
-            <div className="carousel-inner">
-              <div className="carousel-item active">
-                <img src="/images/pic1.jpg" alt="" />
-              </div>
-              <div className="carousel-item">
-                <img src="/images/pic3.jpg" alt="" />
-              </div>
-              <div className="carousel-item">
-                <img src="/images/pic3.jpg" alt="" />
-              </div>
+        {!loading &&
+          dishes &&
+          dishes.length > 0 &&
+          dishes.map((dish) => (
+            <Col md={6} className="pt-2 pb-2" key={dish._id}>
+              <FoodCard dish={dish} />
+            </Col>
+          ))}
+        {!loading && dishes.length <= 0 && (
+          <Col className="text-center">No dishes available.</Col>
+        )}
+        {hasMore && (
+          <Col>
+            <div
+              className={`mx-auto mt-4 ${MenuStyle.hasMore}`}
+              onClick={() => setPage((page) => page + 1)}
+            >
+              Load More
             </div>
-
-            <a className="carousel-control-prev" href="#demo" data-slide="prev">
-              <span className="carousel-control-prev-icon"></span>
-            </a>
-            <a className="carousel-control-next" href="#demo" data-slide="next">
-              <span className="carousel-control-next-icon"></span>
-            </a>
-          </div>
-
-          <div
-            className="accordion md-accordion"
-            id="accordionEx"
-            role="tablist"
-            aria-multiselectable="true"
-          >
-            {menu &&
-              menu.category &&
-              menu.category.map((item, index) => (
-                <Fragment>
-                  {item.dishes.length > 0 && (
-                    <div className="card">
-                      <div
-                        className="card-header p-3"
-                        role="tab"
-                        id={`heading${index}`}
-                      >
-                        <a
-                          data-toggle="collapse"
-                          data-parent="#accordionEx"
-                          href={`#collapse${index}`}
-                          aria-expanded="true"
-                          aria-controls={`collapse${index}`}
-                        >
-                          <h5 className="mb-0 dish_category">
-                            {item.title}
-                            <i className="fas fa-angle-down rotate-icon ml-2"></i>
-                          </h5>
-                        </a>
-                      </div>
-
-                      <div
-                        id={`collapse${index}`}
-                        className="collapse show"
-                        role="tabpanel"
-                        aria-labelledby={`heading${index}`}
-                        data-parent="#accordionEx"
-                      >
-                        <div className="card-body">
-                          <ol className="dishes">
-                            {item.dishes.map((dish, index) => (
-                              <li key={index}>
-                                <div>
-                                  {dish.type === "veg" ? (
-                                    <img src="/images/veg.png" alt="veg" />
-                                  ) : (
-                                    <img
-                                      src="/images/n-veg.png"
-                                      alt="non-veg"
-                                    />
-                                  )}
-                                </div>
-                                <div className="dish_info ml-3">
-                                  <div>{dish.name || ""}</div>
-                                  <label htmlFor="price">
-                                    Rs. {dish.price || 0}
-                                  </label>
-                                </div>
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Fragment>
-              ))}
-          </div>
-          {serverError && (
-            <div className="w-100 text-center text-danger">{serverError}</div>
-          )}
-        </div>
-      </div>
-    </section>
+          </Col>
+        )}
+      </Row>
+      {serverError && (
+        <div className="text-center text-danger">{serverError}</div>
+      )}
+    </Container>
   );
 };
 

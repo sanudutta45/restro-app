@@ -1,0 +1,27 @@
+.qrcode {
+  color: #000 !important;
+  transition: 300ms ease;
+  cursor: pointer;
+  &:hover {
+    color: #38d39f !important;
+  }
+}
+
+.hasMore {
+  max-width: 150px;
+  padding: 15px 16px;
+  width: 100%;
+  text-overflow: ellipsis;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #38d39f;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  border-radius: 1px;
+  box-shadow: 1px 1px 6px #16684d;
+}
